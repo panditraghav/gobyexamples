@@ -3,33 +3,20 @@ package main
 import "fmt"
 
 func main() {
-	i := 1
-	// Only condition
-	for i <= 3 {
-		fmt.Println(i)
-		i = i + 1
+	// Basic
+	if 7%2 == 0 {
+		fmt.Println("7 is even")
+	} else {
+		fmt.Println("7 is odd")
 	}
 
-	// Standard loop
-	for j := 0; j < 3; j++ {
-		fmt.Println(j)
-	}
-
-	// 0 1 2
-	for i := range 3 {
-		fmt.Println("range", i)
-	}
-
-	// Infinite loop
-	for {
-		fmt.Println("loop")
-		break
-	}
-
-	for n := range 6 {
-		if n%2 == 0 {
-			continue
-		}
-		fmt.Println(n)
+	// A statement can precede conditionals; any variables declared in
+	// this statement are available in the current and all subsequent branches.
+	if num := 9; num < 0 {
+		fmt.Println(num, "is negative")
+	} else if num < 10 {
+		fmt.Println(num, "has 1 digit")
+	} else {
+		fmt.Println(num, "has multiple digits")
 	}
 }
