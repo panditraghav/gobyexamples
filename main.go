@@ -1,26 +1,35 @@
 package main
 
-import (
-	"fmt"
-	"math"
-)
-
-// A const statement can appear anywhere a var statement can.
-
-const s string = "constant"
+import "fmt"
 
 func main() {
-	fmt.Println(s)
+	i := 1
+	// Only condition
+	for i <= 3 {
+		fmt.Println(i)
+		i = i + 1
+	}
 
-	const n = 5000000
+	// Standard loop
+	for j := 0; j < 3; j++ {
+		fmt.Println(j)
+	}
 
-	const d = 3e20 / n
-	fmt.Println(d)
+	// 0 1 2
+	for i := range 3 {
+		fmt.Println("range", i)
+	}
 
-	// A numeric constant has no type until it’s given one, such as by an explicit conversion.
-	fmt.Println(int64(d))
+	// Infinite loop
+	for {
+		fmt.Println("loop")
+		break
+	}
 
-	// A number can be given a type by using it in a context that requires one,
-	// such as a variable assignment or function call. For example, here math.Sin expects a float64.
-	fmt.Println(math.Sin(d))
+	for n := range 6 {
+		if n%2 == 0 {
+			continue
+		}
+		fmt.Println(n)
+	}
 }
