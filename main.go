@@ -1,22 +1,53 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
-	// Basic
-	if 7%2 == 0 {
-		fmt.Println("7 is even")
-	} else {
-		fmt.Println("7 is odd")
+	i := 3
+	switch i {
+	case 1:
+		fmt.Println("One")
+	case 2:
+		fmt.Println("Two")
+	case 3:
+		fmt.Println("Three")
 	}
 
-	// A statement can precede conditionals; any variables declared in
-	// this statement are available in the current and all subsequent branches.
-	if num := 9; num < 0 {
-		fmt.Println(num, "is negative")
-	} else if num < 10 {
-		fmt.Println(num, "has 1 digit")
-	} else {
-		fmt.Println(num, "has multiple digits")
+	switch time.Now().Weekday() {
+	case time.Saturday, time.Sunday:
+		fmt.Println("It's weekend!!!!!")
+	default:
+		fmt.Println("Go to work!")
 	}
+
+	// Switch without an expression works as if/else logic
+	t := time.Now()
+	switch {
+	case t.Hour() < 12:
+		fmt.Println("Before noon")
+	default:
+		fmt.Println("After noon")
+	}
+
+	// Type switch compares types instead of values
+	whatAmI := func(i interface{}) {
+		switch t := i.(type) {
+		case bool:
+			fmt.Println("Bool")
+		case int:
+			fmt.Println("Int")
+		case int32:
+			fmt.Println("Int32")
+		default:
+			fmt.Printf("Don't know type: %T\n", t)
+		}
+	}
+
+	whatAmI(1)
+	whatAmI(true)
+	whatAmI('o')
+	whatAmI("Hello")
 }
