@@ -2,52 +2,38 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 func main() {
-	i := 3
-	switch i {
-	case 1:
-		fmt.Println("One")
-	case 2:
-		fmt.Println("Two")
-	case 3:
-		fmt.Println("Three")
-	}
+	var a [5]int
+	fmt.Println("Empty array: ", a)
 
-	switch time.Now().Weekday() {
-	case time.Saturday, time.Sunday:
-		fmt.Println("It's weekend!!!!!")
-	default:
-		fmt.Println("Go to work!")
-	}
+	a[3] = 2
+	fmt.Println("Set array: ", a)
+	fmt.Println("Item: ", a[3])
 
-	// Switch without an expression works as if/else logic
-	t := time.Now()
-	switch {
-	case t.Hour() < 12:
-		fmt.Println("Before noon")
-	default:
-		fmt.Println("After noon")
-	}
+	fmt.Println("len: ", len(a))
 
-	// Type switch compares types instead of values
-	whatAmI := func(i interface{}) {
-		switch t := i.(type) {
-		case bool:
-			fmt.Println("Bool")
-		case int:
-			fmt.Println("Int")
-		case int32:
-			fmt.Println("Int32")
-		default:
-			fmt.Printf("Don't know type: %T\n", t)
+	b := [5]int{1, 2, 3, 4, 5}
+	fmt.Println("b: ", b)
+
+	// You can also have the compiler count the number of elements for you with ...
+	b = [...]int{1, 2, 3, 4, 5}
+
+	b = [...]int{1, 3: 2, 5}
+	fmt.Println("b: ", b)
+
+	var twod [2][3]int
+	for i := 0; i < 2; i++ {
+		for j := 0; j < 3; j++ {
+			twod[i][j] = 2*i + 3*j
 		}
 	}
+	fmt.Println(twod)
 
-	whatAmI(1)
-	whatAmI(true)
-	whatAmI('o')
-	whatAmI("Hello")
+	twod = [2][3]int{
+		{1, 2, 3},
+		{4, 7, 8},
+	}
+	fmt.Println(twod)
 }
