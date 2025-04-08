@@ -1,21 +1,26 @@
 package main
 
 import (
-  "fmt"
+	"fmt"
+	"math"
 )
 
+// A const statement can appear anywhere a var statement can.
+
+const s string = "constant"
+
 func main() {
-  var a int = 10
-  fmt.Println("a: ", a)
-  fmt.Printf("Typeof a: %T\n", a)
+	fmt.Println(s)
 
-  var b, c int = 10, 20
-  fmt.Println("b: ", b, ", c: ", c)
-  fmt.Printf("Typeof b: %T\n", b)
+	const n = 5000000
 
-  var d int
-  fmt.Println("d: ", d)
+	const d = 3e20 / n
+	fmt.Println(d)
 
-  f := "apple"
-  fmt.Println(f)
+	// A numeric constant has no type until it’s given one, such as by an explicit conversion.
+	fmt.Println(int64(d))
+
+	// A number can be given a type by using it in a context that requires one,
+	// such as a variable assignment or function call. For example, here math.Sin expects a float64.
+	fmt.Println(math.Sin(d))
 }
