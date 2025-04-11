@@ -1,41 +1,39 @@
 package main
 
-import "fmt"
-
-func sums(nums ...int) {
-	fmt.Printf("Type of arg: %T\n", nums)
-	fmt.Println("nums: ", nums)
-	var total int = 0
-	for _, num := range nums {
-		total += num
-	}
-	fmt.Println("total: ", total)
-}
-
-func intSeq() func() int {
-	// Closure, num will become a state of this returning function
-	num := 0
-	return func() int {
-		num++
-		return num
-	}
-}
+import (
+	"fmt"
+	"unicode/utf8"
+)
 
 func main() {
-	sums(1, 2)
-	sums(4, 5, 6, 7)
+	const s = "สวัสดีt"
+	fmt.Println("len(s): ", len(s))
 
-	// If you already have multiple args in a slice,
-	// apply them to a variadic function using func(slice...) like this.
-	nums := []int{8, 9, 10, 11}
-	sums(nums...)
+	for i := 0; i < len(s); i++ {
+		fmt.Printf("%x ", s[i])
+	}
+	fmt.Println()
 
-	nextInt := intSeq()
+	fmt.Println("Rune count:", utf8.RuneCountInString(s))
 
-	fmt.Println(nextInt())
-	fmt.Println(nextInt())
-	fmt.Println(nextInt())
+	for idx, runeValue := range s {
+		fmt.Printf("%#U starts at %d\n", runeValue, idx)
+	}
 
-	nextInt = intSeq()
-	fmt.Println(nextInt())
+	fmt.Println("\nUsing DecodeRuneInString")
+	for i, w := 0, 0; i < len(s); i += w {
+		runeValue, width := utf8.DecodeRuneInString(s[i:])
+		fmt.Printf("%#U starts at %d\n", runeValue, i)
+		w = width
+		examineRune(runeValue)
+	}
+	// Values enclosed in single quotes are rune literals. We can compare a rune value to a rune literal directly.
+}
+
+func examineRune(r rune) {
+	if r == 't' {
+		fmt.Println("found tee")
+	} else if r == 'ส' {
+		fmt.Println("found so sua")
+	}
 }
