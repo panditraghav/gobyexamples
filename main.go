@@ -35,9 +35,11 @@ var stateName = map[ServerState]string{
 	StateRetrying:  "retrying",
 }
 
-func (ss ServerState) String() string {
-	return stateName[ss]
-}
+// By implementing the fmt.Stringer interface,
+// values of ServerState can be printed out or converted to strings.
+// func (ss ServerState) String() string {
+// 	return stateName[ss]
+// }
 
 func main() {
 	ns := nextState(StateIdle)
