@@ -1,67 +1,61 @@
 package main
 
-import (
-	"fmt"
-	"math"
+import "fmt"
+
+/*
+Enumerated types (enums) are a special case of sum types.
+An enum is a type that has a fixed number of possible values,
+each with a distinct name. Go doesn’t have an enum type as a
+distinct language feature, but enums are simple to implement
+using existing language idioms.
+*/
+
+type ServerState int
+
+/*
+const (
+	StateIdle      ServerState = 0
+	StateConnected ServerState = 1
+	StateError     ServerState = 2
+	StateRetrying  ServerState = 3
+)
+*/
+// This is same as above, iota generates successive constant values
+const (
+	StateIdle ServerState = iota
+	StateConnected
+	StateError
+	StateRetrying
 )
 
-type geometry interface {
-	area() float64
-	perimeter() float64
+var stateName = map[ServerState]string{
+	StateIdle:      "idle",
+	StateConnected: "connected",
+	StateError:     "error",
+	StateRetrying:  "retrying",
 }
 
-type rect struct {
-	width, height float64
-}
-
-type circle struct {
-	radius float64
-}
-
-func (r rect) area() float64 {
-	return r.height * r.width
-}
-
-func (r rect) perimeter() float64 {
-	return 2*r.height + r.width
-}
-
-func (c circle) area() float64 {
-	return c.radius * c.radius
-}
-
-func (c circle) perimeter() float64 {
-	return math.Pi * c.radius * c.radius
-}
-
-func measure(g geometry) {
-	fmt.Println("Area: ", g.area())
-	fmt.Println("Perimeter: ", g.perimeter())
-}
-
-func detectCircle(g geometry) {
-	if c, ok := g.(circle); ok {
-		fmt.Println("Circle with radius: ", c.radius)
-	}
-}
-
-func geometrySwitch(g geometry) {
-	switch g.(type) {
-	case circle:
-		fmt.Println("Circle with radius: ", g.(circle).radius)
-	case rect:
-		fmt.Println("Rectangle with width: ", g.(rect).width, ", height: ", g.(rect).height)
-	default:
-		fmt.Println("Not a geometry!")
-	}
+func (ss ServerState) String() string {
+	return stateName[ss]
 }
 
 func main() {
-	var r rect = rect{width: 3, height: 4}
-	c := circle{radius: 4}
-	measure(r)
-	measure(c)
-	detectCircle(c)
-	geometrySwitch(r)
-	geometrySwitch(c)
+	ns := nextState(StateIdle)
+	fmt.Println(ns)
+
+	ns2 := nextState(ns)
+	fmt.Println(ns2)
+}
+
+func nextState(ss ServerState) ServerState {
+	switch ss {
+	case StateIdle:
+		return StateConnected
+	case StateConnected, StateRetrying:
+		return StateIdle
+	case StateError:
+		return StateError
+	default:
+		panic(fmt.Errorf("Unknown state: %s", ss))
+	}
 }
