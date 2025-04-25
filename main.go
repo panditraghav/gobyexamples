@@ -1,63 +1,59 @@
 package main
 
-import "fmt"
-
-/*
-Enumerated types (enums) are a special case of sum types.
-An enum is a type that has a fixed number of possible values,
-each with a distinct name. Go doesn’t have an enum type as a
-distinct language feature, but enums are simple to implement
-using existing language idioms.
-*/
-
-type ServerState int
-
-/*
-const (
-	StateIdle      ServerState = 0
-	StateConnected ServerState = 1
-	StateError     ServerState = 2
-	StateRetrying  ServerState = 3
-)
-*/
-// This is same as above, iota generates successive constant values
-const (
-	StateIdle ServerState = iota
-	StateConnected
-	StateError
-	StateRetrying
+import (
+	"errors"
+	"fmt"
 )
 
-var stateName = map[ServerState]string{
-	StateIdle:      "idle",
-	StateConnected: "connected",
-	StateError:     "error",
-	StateRetrying:  "retrying",
+func f(arg int) (int, error) {
+	if arg == 42 {
+		return -1, errors.New("Can't work with 42")
+	}
+	return arg + 3, nil
 }
 
-// By implementing the fmt.Stringer interface,
-// values of ServerState can be printed out or converted to strings.
-// func (ss ServerState) String() string {
-// 	return stateName[ss]
-// }
+// A sentinel error is a predeclared variable that is used to signify a specific error condition.
+var (
+	ErrOutOfTea = fmt.Errorf("no more tea available")
+	ErrPower    = fmt.Errorf("can't boil water")
+)
+
+func makeTea(arg int) error {
+	if arg == 2 {
+		return ErrOutOfTea
+	} else if arg == 4 {
+		/*
+			We can wrap errors with higher-level errors to add context.
+			The simplest way to do this is with the %w verb in fmt.Errorf.
+			Wrapped errors create a logical chain (A wraps B, which wraps C, etc.)
+			that can be queried with functions like errors.Is and errors.As.
+		*/
+		return fmt.Errorf("making tea: %w", ErrPower)
+	}
+	return nil
+}
 
 func main() {
-	ns := nextState(StateIdle)
-	fmt.Println(ns)
+	for _, i := range []int{32, 42} {
+		if val, err := f(i); err != nil {
+			fmt.Printf("Error: %v, return: %v\n", err, val)
+		} else {
+			fmt.Println("No error return: ", val)
+		}
+	}
 
-	ns2 := nextState(ns)
-	fmt.Println(ns2)
-}
-
-func nextState(ss ServerState) ServerState {
-	switch ss {
-	case StateIdle:
-		return StateConnected
-	case StateConnected, StateRetrying:
-		return StateIdle
-	case StateError:
-		return StateError
-	default:
-		panic(fmt.Errorf("Unknown state: %s", ss))
+	for i := range 5 {
+		if err := makeTea(i); err != nil {
+			fmt.Printf("Error: %v\n", err)
+			if errors.Is(err, ErrOutOfTea) {
+				fmt.Println("We should buy new tea!")
+			} else if errors.Is(err, ErrPower) {
+				fmt.Println("Now it is dark.")
+			} else {
+				fmt.Println("Unknown error!")
+			}
+			continue
+		}
+		fmt.Printf("Tea is ready! (i = %v)\n", i)
 	}
 }
