@@ -2,28 +2,34 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
-/*
-This ping function only accepts a channel for sending values.
-It would be a compile-time error to try to receive on this channel.
-*/
-func ping(pings chan<- string, msg string) {
-	pings <- msg
-}
-
-/*
-The pong function accepts one channel for receives (pings) and a second for sends (pongs).
-*/
-func pong(pings <-chan string, pong chan<- string) {
-	msg := <-pings
-	pong <- msg
-}
-
 func main() {
-	pings := make(chan string, 1)
-	pongs := make(chan string, 1)
-	ping(pings, "Hello World")
-	pong(pings, pongs)
-	fmt.Println("Pong: ", <-pongs)
+	/*
+		Go’s select lets you wait on multiple channel operations.
+		Combining goroutines and channels with select is a powerful feature of Go.
+	*/
+	c1 := make(chan string)
+	c2 := make(chan string)
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		c1 <- "One"
+	}()
+
+	go func() {
+		time.Sleep(2 * time.Second)
+		c2 <- "Second"
+	}()
+
+	// We’ll use select to await both of these values simultaneously, printing each one as it arrives.
+	for i := 0; i < 2; i++ {
+		select {
+		case m1 := <-c1:
+			fmt.Println("recieved: ", m1)
+		case m2 := <-c2:
+			fmt.Println("recieved: ", m2)
+		}
+	}
 }
