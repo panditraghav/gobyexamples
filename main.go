@@ -5,18 +5,25 @@ import (
 	"time"
 )
 
-func main() {
-	message := make(chan string)
+/*
+We can use channels to synchronize execution across goroutines.
+Here’s an example of using a blocking receive to wait for a goroutine to finish.
+When waiting for multiple goroutines to finish, you may prefer to use a WaitGroup.
+*/
 
-	go func() {
-		time.Sleep(time.Second)
-		message <- "hello"
-	}()
-	fmt.Println("After func")
-	/*
-		By default sends and receives block until both the sender and receiver are ready.
-		This property allowed us to wait at the end of our program for the "ping"
-		message without having to use any other synchronization.
-	*/
-	fmt.Println("Message is: ", <-message)
+func worker(done chan bool) {
+	fmt.Println("Working...")
+	time.Sleep(time.Second)
+	fmt.Println("Done!")
+	// Send a value to notify that we’re done.
+	done <- true
+}
+
+func main() {
+	done := make(chan bool)
+
+	go worker(done)
+
+	// Block until we receive a notification from the worker on the channel.
+	<-done
 }
