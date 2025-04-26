@@ -5,32 +5,18 @@ import (
 	"time"
 )
 
-func f(from string) {
-	for i := 0; i < 3; i++ {
-		fmt.Println(from, ": ", i)
-	}
-}
-
 func main() {
-	f("first")
+	message := make(chan string)
 
-	// To invoke this function in a goroutine, use go f(s).
-	// This new goroutine will execute concurrently with the calling one.
-	go f("second")
-	// You can also start a goroutine for an anonymous function call.
-	go func(msg string) {
-		fmt.Println(msg)
-	}("third")
-
+	go func() {
+		time.Sleep(time.Second)
+		message <- "hello"
+	}()
+	fmt.Println("After func")
 	/*
-		Our two function calls are running asynchronously in separate goroutines now.
-		Wait for them to finish (for a more robust approach, use a WaitGroup).
+		By default sends and receives block until both the sender and receiver are ready.
+		This property allowed us to wait at the end of our program for the "ping"
+		message without having to use any other synchronization.
 	*/
-	time.Sleep(time.Second)
-	fmt.Println("done")
-	/*
-		When we run this program, we see the output of the blocking call first,
-		then the output of the two goroutines. The goroutines’ output may be interleaved,
-		because goroutines are being run concurrently by the Go runtime.
-	*/
+	fmt.Println("Message is: ", <-message)
 }
